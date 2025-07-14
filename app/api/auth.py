@@ -1,37 +1,28 @@
-from fastapi import (
-    APIRouter,
-    Depends,
-    HTTPException,
-    status
-)
-from fastapi.security import (
-    OAuth2PasswordRequestForm,
-    OAuth2PasswordBearer
-)
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from app.schemas.user import UserCreate, UserRead
-from app.models.user import User
-from app.services.user import (
-    create_user,
-    authenticate_user,
-    create_access_token,
-    create_refresh_token
-)
-from app.core.db import get_bd
-from jose import JWTError, jwt
 import os
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import (HTTPAuthorizationCredentials, HTTPBearer,
+                              OAuth2PasswordBearer, OAuth2PasswordRequestForm)
+from jose import JWTError, jwt
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.db import get_bd
+from app.models.user import User
+from app.schemas.user import UserCreate, UserRead
+from app.services.user import (authenticate_user, create_access_token,
+                               create_refresh_token, create_user)
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
-
+bearer_scheme = HTTPBearer()
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 async def get_current_user(
     db: AsyncSession = Depends(get_bd),
-    token: str = Depends(oauth2_scheme)
+    token: HTTPAuthorizationCredentials = Depends(bearer_scheme)
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -42,14 +33,12 @@ async def get_current_user(
         raise credentials_exception
     try:
         payload = jwt.decode(
-            token,
+            token.credentials,
             SECRET_KEY,
             algorithms=[ALGORITHM]
         )
         user_id = payload.get("sub")
         if not isinstance(user_id, str) or not user_id:
-            raise credentials_exception
-        if user_id is None:
             raise credentials_exception
     except JWTError as e:
         raise credentials_exception from e
