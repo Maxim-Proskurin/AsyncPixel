@@ -54,13 +54,13 @@ docker-compose exec backend pytest --cov=app
 ### Структура проекта (чек-лист)
 
 - [✅] app/
-- [⌛] api/           — Роуты FastAPI
-- [⌛] core/          — Настройки, конфиги
-- [⌛] models/        — SQLAlchemy модели
-- [⌛] schemas/       — Pydantic схемы
+- [✅] api/           — Роуты FastAPI
+- [✅] core/          — Настройки, конфиги
+- [✅] models/        — SQLAlchemy модели
+- [✅] schemas/       — Pydantic схемы
 - [⌛] services/      — Логика обработки
 - [⌛] tasks/         — Celery задачи
-- [⌛] main.py        — Точка входа FastAPI
+- [✅] main.py        — Точка входа FastAPI
 - [✅] alembic/       — Миграции
 - [⌛] tests/         — Тесты (pytest, httpx)
 - [⌛] docker-compose.yml
