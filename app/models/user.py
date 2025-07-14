@@ -1,13 +1,11 @@
 import uuid
-from sqlalchemy import (
-    Column,
-    String,
-    DateTime,
-    func
-)
-from app.core.db import Base
+
+from sqlalchemy import Column, DateTime, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
+from app.core.db import Base
+
 
 class User(Base):
 
