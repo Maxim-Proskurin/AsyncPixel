@@ -21,7 +21,7 @@ class UserCreate(UserBase):
     def password_min_length(cls, v):
         if len(v) < 6:
             raise ValueError("Пароль должен быть не мене 6 символов.")
-        if not re.search(r"/d", v):
+        if not re.search(r"\d", v):
             raise ValueError("Пароль должен содержать хотя бы одну цифру.")
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
             raise ValueError("Пароль должен иметь хотя бы один спецсимвол.")
