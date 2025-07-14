@@ -80,16 +80,19 @@ def create_refresh_token(
 async def create_user(
     db: AsyncSession,
     user_in: UserCreate
-) -> Optional[User]:
-    result = await db.execute(
-        select(User).where(
-            (User.username == user_in.username) |
-            (User.email == user_in.email)
-        )
+) -> tuple[Optional[User], Optional[str]]:
+    username_result = await db.execute(
+        select(User).where(User.username == user_in.username)
     )
-    if existing_user := result.scalar_one_or_none():
-        return None
-    
+    if username_result.scalar_one_or_none():
+        return None, "username"
+
+    email_result = await db.execute(
+        select(User).where(User.email == user_in.email)
+    )
+    if email_result.scalar_one_or_none():
+        return None, "email"
+
     hashed_password = await get_password(user_in.password)
     user = User(
         username=user_in.username,
@@ -100,5 +103,5 @@ async def create_user(
     db.add(user)
     await db.commit()
     await db.refresh(user)
-    return user
+    return user, None
 

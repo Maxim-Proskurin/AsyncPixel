@@ -72,13 +72,19 @@ async def register_user(
     user_in: UserCreate,
     db: AsyncSession = Depends(get_bd)
 ) -> UserRead:
-    user = await create_user(db, user_in)
-    if user is None:
+    user, error = await create_user(db, user_in)
+    if error == "username":
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Пользователь с таким именем или адресом электронной почты уже существует."
+            detail="Пользователь с таким именем уже существует."
+        )
+    if error == "email":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Пользователь с такой почтой уже существует."
         )
     return user
+
 
 @router.post("/login")
 async def login(
