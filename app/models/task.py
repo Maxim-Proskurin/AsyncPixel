@@ -2,10 +2,8 @@ import uuid
 from sqlalchemy import Column, String, DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+from app.core.db import Base
 
-
-Base = declarative_base()
 
 class Task(Base):
     
@@ -42,4 +40,7 @@ class Task(Base):
         server_default=func.now()
     )
     
-    user = relationship("User", back_populates="tasks")
+    user = relationship(
+        "User",
+        back_populates="tasks"
+    )

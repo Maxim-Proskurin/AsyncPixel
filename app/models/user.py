@@ -1,13 +1,16 @@
 import uuid
-from sqlalchemy import Column, String, DateTime, func
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import (
+    Column,
+    String,
+    DateTime,
+    func
+)
+from app.core.db import Base
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-Base = declarative_base()
-
 class User(Base):
-    
+
     __tablename__ = "users"
     
     id = Column(
@@ -42,5 +45,9 @@ class User(Base):
         server_default=func.now()
     )
     
-    tasks = relationship("Task", back_populates="user", cascade="all, delete-orphan")
+    tasks = relationship(
+        "Task",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
     
