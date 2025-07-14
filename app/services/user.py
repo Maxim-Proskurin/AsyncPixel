@@ -1,13 +1,14 @@
+import os
+from datetime import datetime, timedelta, timezone
+from typing import Optional
+
 import bcrypt
-from sqlalchemy.ext.asyncio import AsyncSession
+from jose import jwt
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models.user import User
 from app.schemas.user import UserCreate
-from typing import Optional
-from jose import jwt
-from datetime import datetime, timedelta, timezone
-import os
-
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
